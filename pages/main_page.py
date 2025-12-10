@@ -1,5 +1,8 @@
 from pages.base_page import BasePage
 from locators.basic_function_locators import MainPageLocators
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from data import *
 import allure
 import time
@@ -9,17 +12,21 @@ class MainPage(BasePage):
     @allure.step('Открываем страницу "Главная"')
     def open_main_page(self):
         self.open(main_site)
-        time.sleep(3)
+        time.sleep(2)
            
     @allure.step("Кликнуть на Конструктор")
     def click_constructor(self):
-        time.sleep(3)
-        self.click(MainPageLocators.CONSTRUCTOR_BUTTON)
+        constructor_button = WebDriverWait(self.driver, 10).until(
+        EC.element_to_be_clickable(MainPageLocators.CONSTRUCTOR_BUTTON)
+    )
+        constructor_button.click()
     
     @allure.step("Кликнуть на Ленту заказов")
     def click_order_feed(self):
-        time.sleep(2)
-        self.click(MainPageLocators.ORDER_FEED_BUTTON)
+        order_feed_button = WebDriverWait(self.driver, 10).until(
+        EC.element_to_be_clickable(MainPageLocators.ORDER_FEED_BUTTON)
+    )
+        order_feed_button.click()
     
     @allure.step("Кликнуть на ингредиент из любого раздела")
     def click_ingredient(self):
@@ -44,7 +51,7 @@ class MainPage(BasePage):
     
     @allure.step("Проверить, что открыт конструктор")
     def is_constructor_opened(self):
-        return self.is_element_visible(MainPageLocators.CONSTRUCTOR_AREA)
+        return self.is_element_visible(MainPageLocators.CONSTRUCTOR_AREA,timeout=5)
     
     @allure.step("Перейти в Личный кабинет")
     def go_to_personal_account(self):
@@ -52,11 +59,12 @@ class MainPage(BasePage):
     
     @allure.step("Проверить, что модальное окно открыто")
     def is_modal_open(self):
-        return self.is_element_visible(MainPageLocators.MODAL_WINDOW)
+        return self.is_element_visible(MainPageLocators.MODAL_WINDOW, timeout=5)
     
     @allure.step("Закрыть модальное окно")
     def close_modal(self):
-        self.click(MainPageLocators.MODAL_CLOSE_BUTTON)
+        self.click(MainPageLocators.MODAL_CLOSE_BUTTON, timeout=20)
+    
     
     @allure.step("Авторизация")
     def authorization(self):
@@ -73,4 +81,10 @@ class MainPage(BasePage):
         return True
        
        
-       
+    @allure.step("Дождаться загрузки конструктора")
+    def wait_for_constructor_loaded(self, timeout=15):
+        self.wait_for_visible(MainPageLocators.CONSTRUCTOR_AREA, timeout)
+    
+    @allure.step("Дождаться добавления ингредиента")
+    def wait_for_ingredient_added(self, timeout=10):
+        self.wait_for_visible(MainPageLocators.INGREDIENT_COUNTER, timeout)
