@@ -4,7 +4,7 @@ from pages.base_page import BasePage
 from pages.main_page import MainPage
 from pages.order_feed_page import OrderFeedPage
 from locators.order_feed_locators import OrderFeedLocators
-import time
+
 
 class TestOrderFeed:
     @allure.title("Увеличение счетчика 'Выполнено за всё время' при создании нового заказа")
@@ -56,7 +56,6 @@ class TestOrderFeed:
         order_number = order_feed_page.place_an_order_and_get_number()
         main_page.close_modal()
         order_feed_page.waiting_close_modal_window()
-        #time.sleep(3)
         main_page.click_order_feed()
         order_feed_page.wait_for_order_feed_loaded()
         order_feed_page.wait_for_specific_order_in_progress(order_number,timeout=70)

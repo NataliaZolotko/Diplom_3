@@ -5,25 +5,26 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from data import *
 import allure
-import time
+
 
 
 class MainPage(BasePage):
     @allure.step('Открываем страницу "Главная"')
     def open_main_page(self):
         self.open(main_site)
-        time.sleep(2)
+        self.wait_for_page_loaded()
            
     @allure.step("Кликнуть на Конструктор")
     def click_constructor(self):
-        constructor_button = WebDriverWait(self.driver, 10).until(
+        constructor_button = WebDriverWait(self.driver, 20).until(
         EC.element_to_be_clickable(MainPageLocators.CONSTRUCTOR_BUTTON)
     )
         constructor_button.click()
     
     @allure.step("Кликнуть на Ленту заказов")
     def click_order_feed(self):
-        order_feed_button = WebDriverWait(self.driver, 10).until(
+        self.wait_for_page_loaded()
+        order_feed_button = WebDriverWait(self.driver, 30).until(
         EC.element_to_be_clickable(MainPageLocators.ORDER_FEED_BUTTON)
     )
         order_feed_button.click()
@@ -69,7 +70,6 @@ class MainPage(BasePage):
     @allure.step("Авторизация")
     def authorization(self):
         self.click(MainPageLocators.LOGIN_BUTTON)
-        time.sleep(2)
         email_input = self.find_element(MainPageLocators.EMAIL_INPUT)
         email_input.clear()
         email_input.send_keys(Auth.email)
@@ -77,7 +77,6 @@ class MainPage(BasePage):
         password_input.clear()
         password_input.send_keys(Auth.password)
         self.click(MainPageLocators.ENTER_BUTTON)
-        time.sleep(3)
         return True
        
        
